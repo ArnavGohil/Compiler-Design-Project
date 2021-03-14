@@ -10,5 +10,11 @@ public class ResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+
+        Bundle bundle = getIntent().getExtras();
+        int parser = bundle.getInt("PARSER");
+        String grammar = bundle.getString("GRAMMAR");
+
+
     }
 }

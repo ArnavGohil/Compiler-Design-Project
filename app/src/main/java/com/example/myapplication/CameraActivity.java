@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,7 +9,6 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,9 +33,7 @@ public class CameraActivity extends AppCompatActivity {
     ChipGroup cg;
     TextView gra;
     ExtendedFloatingActionButton fab;
-    String str = " E = aAb | c \n" +
-            " F = aa \n" +
-            " T = b ";
+    String str = "";
     int but_id;
 
     @Override
@@ -56,7 +54,8 @@ public class CameraActivity extends AppCompatActivity {
         });
 
         fab.setOnClickListener(view -> {
-            Toast.makeText(this, "" + but_id, Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getApplicationContext(), ResultActivity.class).putExtra("PARSER", but_id).putExtra("GRAMMAR", str),
+                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         });
 
 
@@ -73,7 +72,6 @@ public class CameraActivity extends AppCompatActivity {
         byte[] byteArray = byteArrayOutputStream.toByteArray();
 
         String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-        Log.e("encoded", encoded);
 
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         String postUrl = "https://vision.googleapis.com/v1/images:annotate?key=" + getString(R.string.key);
