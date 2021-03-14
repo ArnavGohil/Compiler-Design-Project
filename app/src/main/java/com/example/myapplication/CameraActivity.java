@@ -1,10 +1,11 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,20 +13,19 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -73,32 +73,61 @@ public class CameraActivity extends AppCompatActivity {
         byte[] byteArray = byteArrayOutputStream.toByteArray();
 
         String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        Log.e("encoded", encoded);
 
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        String postUrl = "https://vision.googleapis.com/v1/images:annotate?key=" + getString(R.string.key);
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        JSONObject postData = null;
         try {
-            OkHttpClient client = new OkHttpClient().newBuilder()
-                    .build();
-            MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create(mediaType, "{\"requests\":[{\"image\":{\"content\":\"" + encoded + "\"},\"features\":[{\"type\":\"DOCUMENT_TEXT_DETECTION\"}]}]}");
-            Request request = new Request.Builder()
-                    .url("https://vision.googleapis.com/v1/images:annotate?key=" + R.string.key)
-                    .method("POST", body)
-                    .addHeader("Content-Type", "application/json")
-                    .build();
-            Response response = client.newCall(request).execute();
-
-            JSONObject obj = new JSONObject(response.body().string());
-
-
-
-        } catch (Exception e) {
+            postData = new JSONObject("{'requests':[{'image':{'content':'" + encoded + "'},'features':[{'type':'DOCUMENT_TEXT_DETECTION'}]}]}");
+        } catch (JSONException e) {
             e.printStackTrace();
+            AlertDialog ad = adb.create();
+            ad.setTitle("Error");
+            ad.setMessage("Error Converting String to JSON");
+            ad.show();
         }
 
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                postUrl,
+                postData,
+                response -> {
 
-        new Handler().postDelayed(() -> {
-            cir.setVisibility(View.INVISIBLE);
-            gra.setText(str);
-        }, 2000);
+                    Log.e("API", response.toString());
+                    try {
+                        JSONArray arr = response.getJSONArray("responses");
+                        JSONObject f = arr.getJSONObject(0);
+                        JSONArray main = f.getJSONArray("textAnnotations");
+
+                        str = main.getJSONObject(0).getString("description");
+
+                        Log.e("API", "Processed");
+                        Log.e("API", str);
+                        cir.setVisibility(View.INVISIBLE);
+                        gra.setText(str);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        AlertDialog ad = adb.create();
+                        ad.setTitle("Error");
+                        ad.setMessage("Error Parsing Data");
+                        ad.show();
+                    }
+                },
+                error -> {
+                    error.printStackTrace();
+                    AlertDialog ad = adb.create();
+                    ad.setTitle("Error");
+                    ad.setMessage("Error calling API");
+                    ad.show();
+                });
+
+        requestQueue.add(jsonObjectRequest);
+        Log.e("API", "Response Received");
+
 
     }
 }
