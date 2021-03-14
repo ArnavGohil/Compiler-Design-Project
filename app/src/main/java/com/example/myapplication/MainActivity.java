@@ -14,13 +14,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
-                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
-                startActivity(intent, options.toBundle());
-            }
+        new Handler().postDelayed(() -> {
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+            Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+            startActivity(intent, options.toBundle());
         },1000);
 
     }
