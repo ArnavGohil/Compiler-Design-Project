@@ -1,12 +1,15 @@
 package com.example.myapplication;
 
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,6 +21,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ResultActivity extends AppCompatActivity {
@@ -207,9 +213,11 @@ public class ResultActivity extends AppCompatActivity {
         TextInputEditText txt = findViewById(R.id.inp);
         txt.addTextChangedListener(new TextWatcher() {
 
-            public void afterTextChanged(Editable s) { }
+            public void afterTextChanged(Editable s) {
+            }
 
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             public void onTextChanged(CharSequence str, int start, int before, int count) {
                 if (count == 0) {
@@ -221,36 +229,58 @@ public class ResultActivity extends AppCompatActivity {
                 }
                 ArrayList<String> words = new ArrayList<>();
                 String[] split = str.toString().trim().split("\\s+");
-                for(String s: split){
+                for (String s : split) {
                     words.add(s);
                 }
-                if(parser == 1 || parser == 2){
+                if (parser == 1 || parser == 2) {
                     boolean accept = lr0Parser.accept(words);
-                    if(accept){
+                    if (accept) {
                         lay.setError(null);
                         lay.setHintTextColor(getColorStateList(R.color.okay));
                         lay.setBoxStrokeColor(getColor(R.color.okay));
                         lay.setHelperText("Accepted");
-                    }else {
+                    } else {
                         lay.setError("Not Accepted");
                     }
-                }else{
+                } else {
                     boolean accept = lr1Parser.accept(words);
-                    if(accept){
+                    if (accept) {
                         lay.setError(null);
                         lay.setHintTextColor(getColorStateList(R.color.okay));
                         lay.setBoxStrokeColor(getColor(R.color.okay));
                         lay.setHelperText("Accepted");
-                    }else {
+                    } else {
                         lay.setError("Not Accepted");
                     }
                 }
             }
         });
 
+        String toWrite = s + "\n\n"
+                + "Augmented Grammar - \n" + aug + "\n\n"
+                + "First Set - \n" + first + "\n\n"
+                + "Follow Set - \n" + follow + "\n\n"
+                + "Canonical Collection - \n" + canon + "\n\n"
+                + "GOTO Table - \n" + goat + "\n\n"
+                + "ACTION Table - \n" + act + "\n\n";
+
+        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File gpxfile = new File(root, "parser.txt");
+        Log.e("File", gpxfile.getAbsolutePath());
+        FileWriter writer = null;
+        try {
+
+            writer = new FileWriter(gpxfile);
+            writer.append(toWrite);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         ExtendedFloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            // TODO SHARE CODE
+            //TODO - TXT File Sharing Else make it download
         });
 
     }
