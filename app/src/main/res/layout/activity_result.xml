@@ -37,6 +37,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabMode="scrollable">
@@ -69,21 +70,28 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GOTO table" />
+            android:text="Action table" />
 
     </com.google.android.material.tabs.TabLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/textArea"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:padding="8dp"
-        android:textSize="16sp"
-        android:fontFamily="monospace" />
+
+        <HorizontalScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/textArea"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:fontFamily="monospace"
+                android:padding="8dp"
+                android:scrollHorizontally="true"
+                android:textSize="16sp" />
+        </HorizontalScrollView>
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab"
@@ -93,8 +101,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginRight="24dp"
             android:layout_marginBottom="24dp"
-            android:text="SHARE"
             android:backgroundTint="@color/colorPrimary"
+            android:text="SHARE"
             app:icon="?attr/actionModeShareDrawable" />
 
     </RelativeLayout>

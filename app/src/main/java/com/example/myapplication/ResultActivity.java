@@ -2,14 +2,23 @@ package com.example.myapplication;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.Parsers.lr0.LR0Parser;
 import com.example.myapplication.Parsers.lr1.LR1Parser;
 import com.example.myapplication.Parsers.util.Grammar;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.ArrayList;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -32,9 +41,8 @@ public class ResultActivity extends AppCompatActivity {
 
         TextView tt = findViewById(R.id.tt);
         TextView area = findViewById(R.id.textArea);
+        area.setMovementMethod(new ScrollingMovementMethod());
 
-        TextInputEditText txt = findViewById(R.id.inp);
-        // TODO Here
 
         //TODO - Works well
         String grammarText = "S -> A\n" +
@@ -155,12 +163,95 @@ public class ResultActivity extends AppCompatActivity {
         }
 
 
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        area.setText(aug);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int i = tab.getPosition();
+                switch (i) {
+                    case 0:
+                        area.setText(aug);
+                        break;
+                    case 1:
+                        area.setText(first);
+                        break;
+                    case 2:
+                        area.setText(follow);
+                        break;
+                    case 3:
+                        area.setText(canon);
+                        break;
+                    case 4:
+                        area.setText(goat);
+                        break;
+                    case 5:
+                        area.setText(act);
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
 
+        TextInputLayout lay = findViewById(R.id.inpSTR);
+        TextInputEditText txt = findViewById(R.id.inp);
+        txt.addTextChangedListener(new TextWatcher() {
 
+            public void afterTextChanged(Editable s) { }
 
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
+            public void onTextChanged(CharSequence str, int start, int before, int count) {
+                if (count == 0) {
+                    lay.setError(null);
+                    lay.setHintTextColor(getColorStateList(R.color.colorPrimary));
+                    lay.setBoxStrokeColor(getColor(R.color.colorPrimary));
+                    lay.setHelperText(null);
+                    return;
+                }
+                ArrayList<String> words = new ArrayList<>();
+                String[] split = str.toString().trim().split("\\s+");
+                for(String s: split){
+                    words.add(s);
+                }
+                if(parser == 1 || parser == 2){
+                    boolean accept = lr0Parser.accept(words);
+                    if(accept){
+                        lay.setError(null);
+                        lay.setHintTextColor(getColorStateList(R.color.okay));
+                        lay.setBoxStrokeColor(getColor(R.color.okay));
+                        lay.setHelperText("Accepted");
+                    }else {
+                        lay.setError("Not Accepted");
+                    }
+                }else{
+                    boolean accept = lr1Parser.accept(words);
+                    if(accept){
+                        lay.setError(null);
+                        lay.setHintTextColor(getColorStateList(R.color.okay));
+                        lay.setBoxStrokeColor(getColor(R.color.okay));
+                        lay.setHelperText("Accepted");
+                    }else {
+                        lay.setError("Not Accepted");
+                    }
+                }
+            }
+        });
 
+        ExtendedFloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> {
+            // TODO SHARE CODE
+        });
 
     }
 
