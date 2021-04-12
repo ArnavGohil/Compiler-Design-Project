@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.example.myapplication.Parsers.lr0.LR0Parser;
 import com.example.myapplication.Parsers.lr1.LR1Parser;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 
 public class ResultActivity extends AppCompatActivity {
 
-    int parser = 1;
+    int parser = 2;
     String s = "";
     String grammar;
     String aug = "", first = "", follow = "", canon = "", goat = "", act = "";
@@ -50,11 +51,13 @@ public class ResultActivity extends AppCompatActivity {
         area.setMovementMethod(new ScrollingMovementMethod());
 
 
-        //TODO - Works well
-        String grammarText = "S -> A\n" +
-                "S -> B\n" +
-                "A -> b\n" +
-                "B -> a";
+        String grammarText = "E' -> E\n" +
+                "E -> E + T\n" +
+                "E -> T\n" +
+                "T -> T * F\n" +
+                "T -> F\n" +
+                "F -> ( E )\n" +
+                "F -> id";
         Grammar grammar = new Grammar(grammarText);
 
         area.setText("\"\"\"\"\"\"\"");
@@ -239,6 +242,7 @@ public class ResultActivity extends AppCompatActivity {
                         lay.setHintTextColor(getColorStateList(R.color.okay));
                         lay.setBoxStrokeColor(getColor(R.color.okay));
                         lay.setHelperText("Accepted");
+                        lay.setHelperTextColor(getColorStateList(R.color.okay));
                     } else {
                         lay.setError("Not Accepted");
                     }
@@ -249,6 +253,7 @@ public class ResultActivity extends AppCompatActivity {
                         lay.setHintTextColor(getColorStateList(R.color.okay));
                         lay.setBoxStrokeColor(getColor(R.color.okay));
                         lay.setHelperText("Accepted");
+                        lay.setHelperTextColor(getColorStateList(R.color.okay));
                     } else {
                         lay.setError("Not Accepted");
                     }
@@ -260,9 +265,9 @@ public class ResultActivity extends AppCompatActivity {
                 + "Augmented Grammar - \n" + aug + "\n\n"
                 + "First Set - \n" + first + "\n\n"
                 + "Follow Set - \n" + follow + "\n\n"
-                + "Canonical Collection - \n" + canon + "\n\n"
-                + "GOTO Table - \n" + goat + "\n\n"
-                + "ACTION Table - \n" + act + "\n\n";
+                + canon + "\n\n"
+                + goat + "\n\n"
+                + act + "\n\n";
 
         File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File gpxfile = new File(root, "parser.txt");
@@ -280,7 +285,12 @@ public class ResultActivity extends AppCompatActivity {
 
         ExtendedFloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            //TODO - TXT File Sharing Else make it download
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+            sharingIntent.setType("text/*");
+            sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            Uri uri = FileProvider.getUriForFile(ResultActivity.this, getApplicationContext().getPackageName() + ".provider", gpxfile);
+            sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(Intent.createChooser(sharingIntent, "Share file with"));
         });
 
     }
