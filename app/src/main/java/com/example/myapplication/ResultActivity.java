@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -294,15 +293,9 @@ public class ResultActivity extends AppCompatActivity {
         ad.setTitle("ALERT");
         ad.setMessage("The grammar can not be parsed. Choose a different parser or grammar");
         ad.show();
-        onBackPressed();
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(ResultActivity.this);
-        Intent intent = new Intent(ResultActivity.this, CameraActivity.class);
-        startActivity(intent, options.toBundle());
-        finish();
     }
 }
