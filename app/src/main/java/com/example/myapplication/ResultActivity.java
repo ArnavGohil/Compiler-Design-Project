@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -31,7 +32,7 @@ public class ResultActivity extends AppCompatActivity {
 
     int parser = 2;
     String s = "";
-    String grammar;
+    String grammarText;
     String aug = "", first = "", follow = "", canon = "", goat = "", act = "";
     LR0Parser lr0Parser;
     LR1Parser lr1Parser;
@@ -42,22 +43,15 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
 
         Bundle bundle = getIntent().getExtras();
-        //parser = bundle.getInt("PARSER");
-        //grammar = bundle.getString("GRAMMAR");
-//        grammar = grammar.replaceAll("=","->");
+        parser = bundle.getInt("PARSER");
+        grammarText = bundle.getString("GRAMMAR");
+        grammarText = grammarText.replaceAll("=", "->");
 
         TextView tt = findViewById(R.id.tt);
         TextView area = findViewById(R.id.textArea);
         area.setMovementMethod(new ScrollingMovementMethod());
 
 
-        String grammarText = "E' -> E\n" +
-                "E -> E + T\n" +
-                "E -> T\n" +
-                "T -> T * F\n" +
-                "T -> F\n" +
-                "F -> ( E )\n" +
-                "F -> id";
         Grammar grammar = new Grammar(grammarText);
 
         area.setText("\"\"\"\"\"\"\"");
@@ -301,8 +295,15 @@ public class ResultActivity extends AppCompatActivity {
         ad.setTitle("ALERT");
         ad.setMessage("The grammar can not be parsed. Choose a different parser or grammar");
         ad.show();
-        finish();
+        onBackPressed();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(ResultActivity.this);
+        Intent intent = new Intent(ResultActivity.this, CameraActivity.class);
+        startActivity(intent, options.toBundle());
+        finish();
+    }
 }

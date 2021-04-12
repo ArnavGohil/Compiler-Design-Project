@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
         new Handler().postDelayed(() -> {
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
-            Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+            Intent intent = new Intent(MainActivity.this, CameraActivity.class);
             startActivity(intent, options.toBundle());
         },1000);
 

@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -17,9 +18,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,9 +56,28 @@ public class CameraActivity extends AppCompatActivity {
             fab.setVisibility(View.VISIBLE);
         });
 
+        MaterialButton retry = findViewById(R.id.retry);
+        retry.setOnClickListener(view -> {
+            Intent intent1 = getIntent();
+            finish();
+            startActivity(intent1);
+        });
+
+
         fab.setOnClickListener(view -> {
-            startActivity(new Intent(getApplicationContext(), ResultActivity.class).putExtra("PARSER", but_id).putExtra("GRAMMAR", str),
-                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            if (str.length() != 0)
+                startActivity(new Intent(getApplicationContext(), ResultActivity.class).putExtra("PARSER", but_id).putExtra("GRAMMAR", str),
+                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            else
+                Snackbar.make(findViewById(R.id.parent), "Grammar can not be empty", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("RETRY", view1 -> {
+                            Intent intent1 = getIntent();
+                            finish();
+                            startActivity(intent1);
+                        })
+                        .setActionTextColor(Color.parseColor("#F9AA33"))
+                        .setBackgroundTint(Color.parseColor("#344955"))
+                        .show();
         });
 
 
