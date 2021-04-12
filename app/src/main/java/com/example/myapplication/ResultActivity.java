@@ -45,7 +45,6 @@ public class ResultActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         parser = bundle.getInt("PARSER");
         grammarText = bundle.getString("GRAMMAR");
-        grammarText = grammarText.replaceAll("=", "->");
 
         TextView tt = findViewById(R.id.tt);
         TextView area = findViewById(R.id.textArea);

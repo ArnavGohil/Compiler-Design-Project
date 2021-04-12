@@ -18,6 +18,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.myapplication.Parsers.util.Grammar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -65,10 +66,24 @@ public class CameraActivity extends AppCompatActivity {
 
 
         fab.setOnClickListener(view -> {
-            if (str.length() != 0)
-                startActivity(new Intent(getApplicationContext(), ResultActivity.class).putExtra("PARSER", but_id).putExtra("GRAMMAR", str),
-                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-            else
+            if (str.length() != 0) {
+                try {
+                    str = str.replaceAll("=", "->");
+                    Grammar grammar = new Grammar(str);
+                    startActivity(new Intent(getApplicationContext(), ResultActivity.class).putExtra("PARSER", but_id).putExtra("GRAMMAR", str),
+                            ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+                } catch (Exception e) {
+                    Snackbar.make(findViewById(R.id.parent), "Invalid Input", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("RETRY", view1 -> {
+                                Intent intent1 = getIntent();
+                                finish();
+                                startActivity(intent1);
+                            })
+                            .setActionTextColor(Color.parseColor("#F9AA33"))
+                            .setBackgroundTint(Color.parseColor("#344955"))
+                            .show();
+                }
+            } else
                 Snackbar.make(findViewById(R.id.parent), "Grammar can not be empty", Snackbar.LENGTH_INDEFINITE)
                         .setAction("RETRY", view1 -> {
                             Intent intent1 = getIntent();
