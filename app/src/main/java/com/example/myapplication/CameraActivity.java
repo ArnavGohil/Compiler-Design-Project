@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,7 +35,7 @@ public class CameraActivity extends AppCompatActivity {
 
     CircularProgressIndicator cir;
     ChipGroup cg;
-    TextView gra;
+    EditText gra;
     ExtendedFloatingActionButton fab;
     String str = "";
     int but_id;
@@ -68,6 +68,7 @@ public class CameraActivity extends AppCompatActivity {
         fab.setOnClickListener(view -> {
             if (str.length() != 0) {
                 try {
+                    str = gra.getText().toString();
                     str = str.replaceAll("=", "->");
                     Grammar grammar = new Grammar(str);
                     startActivity(new Intent(getApplicationContext(), ResultActivity.class).putExtra("PARSER", but_id).putExtra("GRAMMAR", str),
